@@ -1,0 +1,59 @@
+services:
+  streamgenix-auth-db:
+    container_name: streamgenix-auth-db
+    image: postgres:16
+    environment:
+      LANG: en_US.utf8
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "6464:5432"
+    networks:
+      - sg_auth_network
+    restart: always
+    volumes:
+      - sg_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  streamgenix-auth-backend:
+    container_name: streamgenix-auth-backend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      SERVER_PORT: ${SERVER_PORT}
+      POSTGRES_USERNAME: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      FLYWAY_LOCATIONS: ${FLYWAY_LOCATIONS}
+      HEALTHCHECK_HOST: ${HEALTHCHECK_HOST}
+      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+    ports:
+      - "9080:${SERVER_PORT}"
+    networks:
+      - sg_auth_network
+    restart: always
+    depends_on:
+      streamgenix-auth-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://${HEALTHCHECK_HOST}:${HEALTHCHECK_PORT}/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  sg_auth_network:
+    driver: bridge
+
+volumes:
+  sg_db_data:
+    driver: local
