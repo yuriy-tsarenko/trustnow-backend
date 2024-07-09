@@ -33,16 +33,16 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
-      FLYWAY_MIGRATIONS: classpath:db/migration
-      FLYWAY_FIXTURES: classpath:db/fixtures
-      FLYWAY_DB_EXTENSIONS: classpath:db/extensions
+      FLYWAY_MIGRATIONS: ${FLYWAY_MIGRATIONS}
+      FLYWAY_FIXTURES: ${FLYWAY_FIXTURES}
+      FLYWAY_DB_EXTENSIONS: ${FLYWAY_DB_EXTENSIONS}
     ports:
       - "9080:${SERVER_PORT}"
     networks:
       - trustnow-network
     restart: always
     depends_on:
-      streamgenix-auth-db:
+      trustnow-db:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
