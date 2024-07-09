@@ -1,48 +1,46 @@
 services:
-  streamgenix-auth-db:
-    container_name: streamgenix-auth-db
-    image: postgres:16
+  trustnow-auth-db:
+    container_name: trustnow-auth-db
+    image: postgis/postgis:16-3.4
     environment:
       LANG: en_US.utf8
       POSTGRES_DB: ${POSTGRES_DB}
-      PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_USER: ${POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "6464:5432"
+      - "6464:${POSTGRES_PORT}"
     networks:
-      - sg_auth_network
+      - trustnow_auth_network
     restart: always
     volumes:
-      - sg_db_data:/var/lib/postgresql/data
+      - trustnow_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME}"]
       interval: 30s
       timeout: 10s
       retries: 5
 
-  streamgenix-auth-backend:
-    container_name: streamgenix-auth-backend
+  trustnow-auth-backend:
+    container_name: trustnow-auth-backend
     build:
       context: ./
       dockerfile: Dockerfile
     environment:
       SERVER_PORT: ${SERVER_PORT}
-      POSTGRES_USERNAME: ${POSTGRES_USER}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
-      FLYWAY_LOCATIONS: ${FLYWAY_LOCATIONS}
-      HEALTHCHECK_HOST: ${HEALTHCHECK_HOST}
-      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     ports:
       - "9080:${SERVER_PORT}"
     networks:
-      - sg_auth_network
+      - trustnow_auth_network
     restart: always
     depends_on:
-      streamgenix-auth-db:
+      trustnow-auth-db:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://${HEALTHCHECK_HOST}:${HEALTHCHECK_PORT}/actuator/health || exit 1"]
@@ -51,9 +49,9 @@ services:
       retries: 5
 
 networks:
-  sg_auth_network:
+  trustnow_auth_network:
     driver: bridge
 
 volumes:
-  sg_db_data:
+  trustnow_db_data:
     driver: local

@@ -8,11 +8,12 @@
         <version>3.3.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.streamgenix.auth</groupId>
-    <artifactId>sg-auth</artifactId>
+    <groupId>com.trust.now</groupId>
+    <artifactId>trust-now</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>sg-auth</name>
-    <description>sg-auth</description>
+    <name>trustnow-backend</name>
+    <description>Authentication service designed to provide robust user authentication and authorization solutions
+    </description>
 
     <properties>
         <java.version>17</java.version>
@@ -31,14 +32,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -55,6 +48,17 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>10.15.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.15.2</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -80,6 +84,21 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <configuration>
+                    <url>jdbc:postgresql://${env.POSTGRES_HOST}:${env.POSTGRES_PORT}/${env.POSTGRES_DB}</url>
+                    <user>${env.POSTGRES_USERNAME}</user>
+                    <password>${env.POSTGRES_PASSWORD}</password>
+                    <locations>
+                        <location>${env.FLYWAY_MIGRATIONS}</location>
+                        <location>${env.FLYWAY_FIXTURES}</location>
+                        <location>${env.FLYWAY_DB_EXTENSIONS}</location>
+                        <location>${env.FLYWAY_CONSTRAINTS}</location>
+                    </locations>
                 </configuration>
             </plugin>
         </plugins>
