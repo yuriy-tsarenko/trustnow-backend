@@ -55,6 +55,12 @@
             <version>10.15.2</version>
         </dependency>
         <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.15.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -91,24 +97,9 @@
                         <location>${env.FLYWAY_MIGRATIONS}</location>
                         <location>${env.FLYWAY_FIXTURES}</location>
                         <location>${env.FLYWAY_DB_EXTENSIONS}</location>
+                        <location>${env.FLYWAY_CONSTRAINTS}</location>
                     </locations>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>flyway-migrate</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>migrate</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flyway-validate</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>validate</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

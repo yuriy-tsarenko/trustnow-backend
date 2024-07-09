@@ -1,54 +1,47 @@
 services:
-  trustnow-db:
-    container_name: trustnow-db
+  trustnow-auth-db:
+    container_name: trustnow-auth-db
     image: postgis/postgis:16-3.4
     environment:
       LANG: en_US.utf8
       POSTGRES_DB: ${POSTGRES_DB}
-      PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_USER: ${POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "6464:${POSTGRES_PORT}"
     networks:
-      - trustnow-network
+      - trustnow_auth_network
     restart: always
     volumes:
-      - trustnow-db-data:/var/lib/postgresql/data
+      - trustnow_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME}"]
       interval: 30s
       timeout: 10s
       retries: 5
 
-  trustnow-backend:
-    container_name: trustnow-backend
+  trustnow-auth-backend:
+    container_name: trustnow-auth-backend
     build:
       context: ./
       dockerfile: Dockerfile
     environment:
       SERVER_PORT: ${SERVER_PORT}
-      POSTGRES_USERNAME: ${POSTGRES_USER}
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
-      FLYWAY_MIGRATIONS: classpath:db/migration
-      FLYWAY_FIXTURES: classpath:db/fixtures
-      FLYWAY_DB_EXTENSIONS: classpath:db/extensions
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     ports:
       - "9080:${SERVER_PORT}"
     networks:
-      - trustnow-network
+      - trustnow_auth_network
     restart: always
     depends_on:
-      streamgenix-auth-db:
+      trustnow-auth-db:
         condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mvn clean package -DskipTests &&
-      java -jar target/*.jar
-      "
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://${HEALTHCHECK_HOST}:${HEALTHCHECK_PORT}/actuator/health || exit 1"]
       interval: 30s
@@ -56,9 +49,9 @@ services:
       retries: 5
 
 networks:
-  trustnow-network:
+  trustnow_auth_network:
     driver: bridge
 
 volumes:
-  trustnow-db-data:
+  trustnow_db_data:
     driver: local

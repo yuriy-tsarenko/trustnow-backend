@@ -117,6 +117,5 @@ CREATE TABLE audit_log
     username          VARCHAR(100) NOT NULL,
     level             VARCHAR(50)  NOT NULL,
     message           TEXT         NOT NULL,
-    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    format_created_at VARCHAR(50) GENERATED ALWAYS AS (to_char(created_at, 'YYYY-MM-DD HH24:MI:SS')) STORED
+    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

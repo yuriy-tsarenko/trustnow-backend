@@ -11,7 +11,7 @@ VALUES ('Default Organization', 'This is a default organization for initial setu
         CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO user_account (organization_id, username, first_name, middle_name, last_name,
-                          password_hash, is_email_verified, is_active, created_at, updated_at)
+                          password, is_email_verified, is_active, created_at, updated_at)
 VALUES ((SELECT id FROM organization WHERE name = 'Default Organization'), 'admin', 'Admin', NULL, 'User',
         'hashed_password', TRUE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ((SELECT id FROM organization WHERE name = 'Default Organization'), 'jdoe', 'John', 'M.', 'Doe',
