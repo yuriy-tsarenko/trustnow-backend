@@ -1,10 +1,10 @@
-package com.streamgenix.auth;
+package com.trust.now.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SgAuthApplicationTests {
+class TrustNowApplicationTests {
 
     @Test
     void contextLoads() {

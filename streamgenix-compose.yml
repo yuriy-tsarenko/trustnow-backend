@@ -1,7 +1,7 @@
 services:
-  streamgenix-auth-db:
-    container_name: streamgenix-auth-db
-    image: postgres:16
+  trustnow-db:
+    container_name: trustnow-db
+    image: postgis/postgis:16-3.4
     environment:
       LANG: en_US.utf8
       POSTGRES_DB: ${POSTGRES_DB}
@@ -9,20 +9,20 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "6464:5432"
+      - "6464:${POSTGRES_PORT}"
     networks:
-      - sg_auth_network
+      - trustnow-network
     restart: always
     volumes:
-      - sg_db_data:/var/lib/postgresql/data
+      - trustnow-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 30s
       timeout: 10s
       retries: 5
 
-  streamgenix-auth-backend:
-    container_name: streamgenix-auth-backend
+  trustnow-backend:
+    container_name: trustnow-backend
     build:
       context: ./
       dockerfile: Dockerfile
@@ -33,17 +33,22 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
-      FLYWAY_LOCATIONS: ${FLYWAY_LOCATIONS}
-      HEALTHCHECK_HOST: ${HEALTHCHECK_HOST}
-      HEALTHCHECK_PORT: ${HEALTHCHECK_PORT}
+      FLYWAY_MIGRATIONS: classpath:db/migration
+      FLYWAY_FIXTURES: classpath:db/fixtures
+      FLYWAY_DB_EXTENSIONS: classpath:db/extensions
     ports:
       - "9080:${SERVER_PORT}"
     networks:
-      - sg_auth_network
+      - trustnow-network
     restart: always
     depends_on:
       streamgenix-auth-db:
         condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mvn clean package -DskipTests &&
+      java -jar target/*.jar
+      "
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://${HEALTHCHECK_HOST}:${HEALTHCHECK_PORT}/actuator/health || exit 1"]
       interval: 30s
@@ -51,9 +56,9 @@ services:
       retries: 5
 
 networks:
-  sg_auth_network:
+  trustnow-network:
     driver: bridge
 
 volumes:
-  sg_db_data:
+  trustnow-db-data:
     driver: local
