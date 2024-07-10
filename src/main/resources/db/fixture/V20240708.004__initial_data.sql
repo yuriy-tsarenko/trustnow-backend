@@ -36,7 +36,8 @@ VALUES ((SELECT id FROM user_account WHERE username = 'admin'), 'work', '123-456
         '34567', ST_GeogFromText('SRID=4326;POINT(-71.0589 42.3603)'), 'Sample Country', '345 Sample St', 'Unit 300',
         TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-UPDATE organization SET owner_id = (SELECT id FROM user_account WHERE username = 'admin')
+UPDATE organization
+SET owner_id = (SELECT id FROM user_account WHERE username = 'admin')
 WHERE name = 'Default Organization';
 
 INSERT INTO user_roles (user_id, role_id)
