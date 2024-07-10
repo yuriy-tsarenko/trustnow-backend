@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -27,10 +28,10 @@ public class UserJwtAuthenticationFilter extends OncePerRequestFilter {
         log.debug("JWT authentication filter");
         log.debug("Request: {}", request.getRequestURI());
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+//&& authorizationHeader.startsWith(jwtConfig.getTokenPrefix())
+        if (StringUtils.hasText(authorizationHeader)) {
             try {
-                UserAuthentication userAuthentication = userAuthService.
+                UserAuthentication userAuthentication = userAuthService.doAuth(authorizationHeader);
                 SecurityContextHolder.getContext().setAuthentication(userAuthentication);
             } catch (JwtException e) {
                 log.error("Token cannot be parsed: {}", e.getMessage());

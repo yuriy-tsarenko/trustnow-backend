@@ -1,4 +1,4 @@
-package com.trust.now.dto
+package com.trust.now.dto;
 
-record UserCredentialsDto(String username, String password) {
+public record UserCredentialsDto(String username, String password) {
 }
