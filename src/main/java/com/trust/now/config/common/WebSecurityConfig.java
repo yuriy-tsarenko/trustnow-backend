@@ -1,9 +1,8 @@
 package com.trust.now.config.common;
 
 import com.trust.now.config.cors.OriginHeaderCheckInterceptor;
-import com.trust.now.config.jwt.JwtConfig;
 import com.trust.now.config.jwt.UserJwtAuthenticationFilter;
-import com.trust.now.service.auth.JwtServiceImpl;
+import com.trust.now.service.auth.UserAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,9 +30,7 @@ public class WebSecurityConfig {
     @Value("${security.encoding-strength-level:10}")
     private Integer encodingStrengthLevel;
 
-    private final JwtConfig jwtConfig;
-    private final JwtServiceImpl jwtService;
-
+    private final UserAuthService authService;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -47,7 +44,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/v1/users/register").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                                 .anyRequest().authenticated())
-                .addFilterBefore(new UserJwtAuthenticationFilter(jwtConfig, jwtService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new UserJwtAuthenticationFilter(authService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
