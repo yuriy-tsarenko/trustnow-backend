@@ -17,6 +17,15 @@
 
     <properties>
         <java.version>17</java.version>
+        <env.POSTGRES_HOST>localhost</env.POSTGRES_HOST>
+        <env.POSTGRES_PORT>5432</env.POSTGRES_PORT>
+        <env.POSTGRES_DB>your_database</env.POSTGRES_DB>
+        <env.POSTGRES_USERNAME>your_username</env.POSTGRES_USERNAME>
+        <env.POSTGRES_PASSWORD>your_password</env.POSTGRES_PASSWORD>
+        <env.FLYWAY_MIGRATIONS>filesystem:src/main/resources/db/migration</env.FLYWAY_MIGRATIONS>
+        <env.FLYWAY_FIXTURES>filesystem:src/main/resources/db/fixtures</env.FLYWAY_FIXTURES>
+        <env.FLYWAY_DB_EXTENSIONS>filesystem:src/main/resources/db/extensions</env.FLYWAY_DB_EXTENSIONS>
+        <env.FLYWAY_CONSTRAINTS>filesystem:src/main/resources/db/constraints</env.FLYWAY_CONSTRAINTS>
     </properties>
 
     <dependencies>
@@ -32,12 +41,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -61,6 +73,23 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -70,6 +99,7 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>

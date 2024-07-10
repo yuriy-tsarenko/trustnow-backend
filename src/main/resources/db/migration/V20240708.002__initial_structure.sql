@@ -113,9 +113,9 @@ CREATE TABLE mfa
 
 CREATE TABLE audit_log
 (
-    id                UUID      DEFAULT gen_random_uuid() PRIMARY KEY,
-    username          VARCHAR(100) NOT NULL,
-    level             VARCHAR(50)  NOT NULL,
-    message           TEXT         NOT NULL,
-    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id         UUID      DEFAULT gen_random_uuid() PRIMARY KEY,
+    username   VARCHAR(100) NOT NULL,
+    level      VARCHAR(50)  NOT NULL,
+    message    TEXT         NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
