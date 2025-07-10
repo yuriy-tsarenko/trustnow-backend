@@ -62,9 +62,10 @@ public class JwtServiceImpl implements AuthTokenService {
         }
     }
 
+    @Override
     public UserAuthentication parseToken(String token) {
         Jws<Claims> claimsJws = Jwts.parser()
-                .decryptWith(secretKey)
+                .verifyWith(secretKey)
                 .requireIssuer(issuer)
                 .build()
                 .parseSignedClaims(token);
